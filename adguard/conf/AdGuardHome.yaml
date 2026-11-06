@@ -151,6 +151,17 @@ user_rules:
   - '||byteadverts.com^'
   - '||pangolin-sdk-toutiao.com^'
   - '||pangolin16.sgsnssdk.com^'
+  - '||pinduoduo.com^'
+  - '||yangkeduo.com^'
+  - '||pddpic.com^'
+  - '||pddugc.com^'
+  - '||pddcdn.com^'
+  - '||temu.com^'
+  - '||pddpay.com^'
+  - '||pdd.net.cn^'
+  - '||pinduoduo.net^'
+  - '||pddlive.com^'
+  - '||yangshengba.com^'
 dhcp:
   enabled: false
   interface_name: ""

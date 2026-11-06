@@ -84,3 +84,16 @@ bsync3-normal-lq.zijieapi.com
 byteadverts.com
 pangolin-sdk-toutiao.com
 pangolin16.sgsnssdk.com
+
+# 拼多多全系封禁（用户明确要求）2026-11-06
+pinduoduo.com
+yangkeduo.com
+pddpic.com
+pddugc.com
+pddcdn.com
+temu.com
+pddpay.com
+pdd.net.cn
+pinduoduo.net
+pddlive.com
+yangshengba.com
