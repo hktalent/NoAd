@@ -1,0 +1,82 @@
+# =============================================================================
+# AdGuardHome + mitmproxy 广告过滤方案（方案 C：DNS + HTTPS 中间人代理）
+# 用途：过滤网络广告，重点拦截"红果短剧"等 App 内广告
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # AdGuardHome —— DNS 层广告过滤
+  # Web UI: http://localhost:3000
+  # DNS 端口: 53 (UDP/TCP)
+  # ---------------------------------------------------------------------------
+  adguardhome:
+    image: adguard/adguardhome:latest
+    container_name: adguardhome
+    restart: unless-stopped
+    ports:
+      # DNS —— mDNSResponder 保留 53 端口（Bonjour/AirDrop 正常），
+      # AdGuardHome 使用 8053，通过 pf 将局域网 53 端口请求转发到 8053
+      - "8053:53/tcp"
+      - "8053:53/udp"
+      # Web UI —— 3000 被 Docker 占用，改用 3001
+      - "3001:3000/tcp"
+    volumes:
+      - ./adguard/work:/opt/adguardhome/work
+      - ./adguard/conf:/opt/adguardhome/conf
+    networks:
+      - ad-net
+
+  # ---------------------------------------------------------------------------
+  # mitmproxy —— HTTPS 中间人代理，拦截 App 内广告请求
+  # 代理端口: 8080
+  # Web UI: http://localhost:8081 (mitmweb)
+  # ---------------------------------------------------------------------------
+  mitmproxy:
+    image: mitmproxy/mitmproxy:latest
+    container_name: mitmproxy
+    restart: unless-stopped
+    depends_on:
+      - adguardhome
+    ports:
+      # 代理端口 —— 8080 被 Docker 占用，改用 8082
+      - "8082:8080"
+      # mitmweb Web UI —— 8081 空闲，保持
+      - "8081:8081"
+    environment:
+      # 让容器内进程使用 AdGuardHome 作为 DNS，确保代理出流量也走广告过滤
+      - DNS_SERVER=adguardhome
+    dns:
+      - 223.5.5.5
+      - 119.29.29.29
+    volumes:
+      - ./mitmproxy/scripts:/home/mitmproxy/scripts:ro
+      - ./mitmproxy/rules:/home/mitmproxy/rules:ro
+      - ./mitmproxy/certs:/home/mitmproxy/.mitmproxy
+    # 使用 mitmweb 运行自定义拦截脚本，同时提供 Web UI 查看流量
+    command:
+      - mitmweb
+      - --listen-host
+      - "0.0.0.0"
+      - --listen-port
+      - "8080"
+      - --web-host
+      - "0.0.0.0"
+      - --web-port
+      - "8081"
+      - --set
+      - block_global=false
+      - --set
+      - ssl_insecure=true
+      - --set
+      - web_password=mitmproxy
+      # 字节系/红果短剧域名直接透传，不做 SSL 解密（避免 SSL Pinning 导致 App 无法使用）
+      - --ignore-hosts
+      - "10\\.\\d+\\.\\d+\\.\\d+|172\\.(1[6-9]|2[0-9]|3[01])\\.\\d+\\.\\d+|192\\.168\\.\\d+\\.\\d+|127\\.\\d+\\.\\d+\\.\\d+|localhost|\\.local|snssdk\\.com|toutiao\\.com|hongguo\\.com|amemv\\.com|ixigua\\.com|douyinvod\\.com|bytedance\\.com|bytedns1\\.com|bytedns\\.net|aioho\\.com|gtvvod\\.com|huoshanstatic\\.com|douyin\\.com|fqnovel\\.com|bdurl\\.net|bytedanceapi\\.com|icloud\\.com|apple\\.com|apple-cloudkit\\.com|icloud-content\\.com"
+      - -s
+      - /home/mitmproxy/scripts/block_ads.py
+    networks:
+      - ad-net
+
+networks:
+  ad-net:
+    driver: bridge

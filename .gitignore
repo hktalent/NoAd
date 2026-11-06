@@ -1,0 +1,16 @@
+# AdGuardHome 运行时数据（自动生成，不共享）
+adguard/work/
+adguard/conf/sessions.db
+adguard/conf/stats.db
+
+# mitmproxy 证书（每个实例自动生成，不共享）
+mitmproxy/certs/
+certs-export/
+
+# 日志
+mitmproxy/certs/blocked.log
+*.log
+
+# Docker
+.docker/
+./.DS_Store

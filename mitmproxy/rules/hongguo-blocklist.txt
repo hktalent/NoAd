@@ -1,0 +1,79 @@
+# =============================================================================
+# 红果短剧 & 国内 App 广告拦截规则
+# 适用于 mitmproxy 的 block_ads.py 脚本
+#
+# 格式说明：
+#   1. 以 # 开头的行为注释
+#   2. ||domain.com^   —— 拦截该域名及其所有子域名（AdGuard 格式）
+#   3. domain.com      —— 拦截该域名
+#   4. *keyword*       —— URL 中包含 keyword 即拦截
+#
+# ⚠️ 重要：只拦截确认的广告/统计域名，不要拦截核心 API 域名
+#    （如 api.snssdk.com、i.snssdk.com、api.amemv.com 等），
+#    否则 App 视频无法播放。
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# 红果短剧（字节跳动）广告专属域名（非核心 API）
+# ---------------------------------------------------------------------------
+||ad.toutiao.com^
+||ad-sdk.snssdk.com^
+||api-access.skq-one.com^
+
+# ---------------------------------------------------------------------------
+# 通用广告联盟 / 统计 SDK
+# ---------------------------------------------------------------------------
+||adservice.google.com^
+||doubleclick.net^
+||googlesyndication.com^
+||googleads.g.doubleclick.net^
+||umeng.com^
+||umengcloud.com^
+||cnzz.com^
+||talkingdata.com^
+||gdt.qq.com^
+||e.qq.com^
+||adsmind.com^
+||tanx.com^
+||mmstat.com^
+||cpro.baidu.com^
+||pos.baidu.com^
+||cbjs.baidu.com^
+||hm.baidu.com^
+||mtj.baidu.com^
+||dup.baidustatic.com^
+||bdstatic.com^
+
+# ---------------------------------------------------------------------------
+# 视频 / 信息流广告专属域名
+# ---------------------------------------------------------------------------
+||ad.video.com.cn^
+||v.admaster.com.cn^
+||c.admaster.com.cn^
+||adsdk.ksapisrv.com^
+||ad.xiaomi.com^
+||ad1.xiaomi.com^
+||adbrix.com^
+||ad.xiaojukeji.com^
+
+# ---------------------------------------------------------------------------
+# 红果短剧广告接口 URL 关键词（仅匹配广告 API 路径，不影响核心接口）
+# ---------------------------------------------------------------------------
+*/api/ad/feed*
+*/api/ads/*
+*/api/advertise*
+*/ad_sdk/*
+*/ad-push/*
+*/getad*
+*/fetchad*
+*/openad*
+*/adconfig*
+*/ad_feed*
+*/ad_info*
+*/ad_list*
+*/ad_resource*
+*/adview/*
+*/adslot/*
+*/ssp/*
+*/dsp/*
+*/adsdk/*

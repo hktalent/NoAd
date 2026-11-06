@@ -1,0 +1,12 @@
+# =============================================================================
+# pf 端口转发规则：将局域网设备发往 Mac:53 的 DNS 请求转发到 AdGuardHome(8053)
+# 保留 mDNSResponder，确保 Bonjour/AirDrop/AirPlay 正常工作
+#
+# 注意：macOS pf 对 lo0(本地回环)的 rdr 不可靠，
+#       因此 Mac 自身使用公共 DNS(223.5.5.5)，不经过 AdGuardHome。
+#       仅对局域网外部设备(en0)做端口转发。
+# =============================================================================
+
+# 局域网设备 -> Mac:53 -> AdGuardHome:8053
+rdr pass on en0 proto udp from any to (en0) port 53 -> 127.0.0.1 port 8053
+rdr pass on en0 proto tcp from any to (en0) port 53 -> 127.0.0.1 port 8053
