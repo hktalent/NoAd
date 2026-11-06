@@ -125,6 +125,18 @@ filters:
     url: https://fastly.jsdelivr.net/gh/cjx82630/cjxlist@master/cjx-annoyance.txt
     name: 乘风广告过滤规则(cjx)
     id: 1793959746
+  - enabled: true
+    url: https://fastly.jsdelivr.net/gh/TG-Twilight/AWAvenue-Ads-Rule@main/AWAvenue-Ads-Rule.txt
+    name: AWAvenue秋风广告规则(国产App专杀)
+    id: 1793959747
+  - enabled: true
+    url: https://fastly.jsdelivr.net/gh/Cats-Team/AdRules@main/adblock.txt
+    name: AdRules大圣净化(聚合规则)
+    id: 1793959748
+  - enabled: true
+    url: https://fastly.jsdelivr.net/gh/hagezi/dns-blocklists@main/adblock/pro.mini.txt
+    name: hagezi Pro Mini(全球广告跟踪)
+    id: 1793959749
 whitelist_filters: []
 user_rules:
   - '||ad.toutiao.com^'
