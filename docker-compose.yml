@@ -24,7 +24,8 @@ services:
       - ./adguard/work:/opt/adguardhome/work
       - ./adguard/conf:/opt/adguardhome/conf
     networks:
-      - ad-net
+      ad-net:
+        ipv4_address: 172.20.0.2
 
   # ---------------------------------------------------------------------------
   # mitmproxy —— HTTPS 中间人代理，拦截 App 内广告请求
@@ -45,7 +46,11 @@ services:
     environment:
       # 让容器内进程使用 AdGuardHome 作为 DNS，确保代理出流量也走广告过滤
       - DNS_SERVER=adguardhome
+    # 关键：mitmproxy 的 DNS 必须指向 AdGuardHome。
+    # 手机走代理时，域名解析发生在 mitmproxy 容器内；
+    # 若用公共 DNS，广告域名（ad.toutiao.com 等）会绕过 DNS 层拦截，导致广告漏网。
     dns:
+      - 172.20.0.2
       - 223.5.5.5
       - 119.29.29.29
     volumes:
@@ -80,3 +85,6 @@ services:
 networks:
   ad-net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

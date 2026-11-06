@@ -294,7 +294,38 @@ command:
 > ⚠️ **注意**：必须用 `--ignore-hosts` 命令行选项，不能用 `--set ignore_hosts=`
 > （后者在当前 mitmproxy 版本不生效，会导致 SSL 仍被拦截）。
 
-### 5.3 规则文件
+### 5.3 mitmproxy 的 DNS 必须走 AdGuardHome（关键）
+
+手机开启 HTTP 代理后，**域名解析发生在 mitmproxy 容器内**，而不是手机上。
+如果 mitmproxy 容器使用公共 DNS（如 223.5.5.5），会出现致命漏洞：
+
+```
+手机（代理开） → mitmproxy
+  ├─ 域名解析：用公共 DNS 直接解析 → 绕过 AdGuardHome
+  ├─ 字节系域名 → --ignore-hosts 透传 → block_ads.py 看不到内容
+  └─ 结果：ad.toutiao.com 等广告域名两层拦截全部失效，广告漏网
+```
+
+因此 `docker-compose.yml` 中 mitmproxy 的 `dns` 第一项必须指向
+AdGuardHome 容器（固定 IP `172.20.0.2`）：
+
+```yaml
+adguardhome:
+  networks:
+    ad-net:
+      ipv4_address: 172.20.0.2   # 固定 IP，供 mitmproxy 引用
+
+mitmproxy:
+  dns:
+    - 172.20.0.2    # AdGuardHome（必须排第一）
+    - 223.5.5.5     # 兜底
+    - 119.29.29.29
+```
+
+效果：即使流量被透传，广告域名在**解析阶段**就被 AdGuardHome 拦死
+（返回 0.0.0.0），连接直接失败，广告无法加载；视频域名有白名单不受影响。
+
+### 5.4 规则文件
 
 黑名单规则位于 `mitmproxy/rules/hongguo-blocklist.txt`，包含：
 
