@@ -5,7 +5,6 @@ adguard/conf/stats.db
 
 # mitmproxy 证书（每个实例自动生成，不共享）
 mitmproxy/certs/
-certs-export/
 
 # 日志
 mitmproxy/certs/blocked.log

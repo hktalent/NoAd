@@ -138,14 +138,32 @@ AdGuardHome 已通过配置文件预初始化，无需手动走安装向导。�
 - `223.5.5.5`（阿里 DNS）
 - `119.29.29.29`（DNSPod）
 
-**已订阅的过滤规则**（共约 28.8 万条）：
-- anti-AD（中文广告过滤最全面）：96,292 条
-- AdGuard DNS filter：190,028 条
-- 乘风广告过滤规则(cjx)：1,820 条（骚扰/弹窗类广告补充）
-- 用户自定义规则（红果短剧广告域名）：12 条
+**已订阅的过滤规则**（6 个源 + 自定义，共约 52.8 万条）：
 
+| 规则源 | 条数 | 覆盖范围 |
+|--------|------|----------|
+| anti-AD | 96,292 | 中文广告最全：国产 App、视频网站、挂马 |
+| AdGuard DNS filter | 190,056 | 全球广告网络：Google、Facebook、Criteo 等 |
+| AdRules 大圣净化 | 136,189 | 中文聚合规则（合并多个中文源） |
+| hagezi Pro Mini | 102,624 | 全球广告/跟踪器/恶意域名 |
+| 乘风广告过滤规则(cjx) | 1,820 | 国内网站弹窗/骚扰类补充 |
+| AWAvenue 秋风广告规则 | 976 | **国产 App 广告 SDK 专杀**（字节、腾讯、阿里、百度、京东、快手等联盟） |
+| 用户自定义规则 | 40+ | 红果短剧专项 + 拼多多全系封禁 |
+
+> 所有订阅源均走 **jsdelivr CDN**（raw.githubusercontent.com 被墙），每 24 小时自动更新。
 > HalfLife 规则源已失效（GitHub 仓库迁移/删除），改用乘风规则补充。
 > 如需添加更多规则：Web UI → 过滤器 → DNS 封锁列表 → 添加封锁列表
+
+**主要广告厂商覆盖情况**：
+
+| 厂商 | 覆盖方式 |
+|------|----------|
+| 字节系（穿山甲/groMore/电商） | AWAvenue + 自定义（`pangolin`、`ecombdimg`、`ad.toutiao.com`） |
+| 拼多多/Temu | 自定义全系封禁 11 个域名（见 5.4 节） |
+| 腾讯广告（优量汇 gdt.qq.com） | 自定义 + 各订阅源 |
+| 阿里/百度/京东联盟 | anti-AD + AWAvenue + AdRules |
+| Google/Facebook 系 | AdGuard DNS filter + hagezi |
+| 数据埋点（友盟、CNZZ、TalkingData） | 自定义 + hagezi |
 
 > 如需修改密码：Web UI → 设置 → 常规设置 → 用户设置
 
@@ -330,10 +348,17 @@ mitmproxy:
 黑名单规则位于 `mitmproxy/rules/hongguo-blocklist.txt`，包含：
 
 - 字节跳动广告 SDK 域名
+- 字节电商广告素材源（`ecombdapi.com`、`ecombdimg.com`——红果"拼多多广告"的实际加载源）
+- 拼多多全系封禁 11 个域名：`pinduoduo.com`、`yangkeduo.com`、`pddpic.com`、
+  `pddugc.com`、`pddcdn.com`、`temu.com`、`pddpay.com`、`pinduoduo.net`、
+  `pdd.net.cn`、`pddlive.com`、`yangshengba.com`
 - 国内常见广告联盟域名（友盟、TalkingData、广点通等）
 - 视频广告常见域名
 - URL 关键词规则（`/ad/`、`/ads/`、`/api/ad/*` 等）
 - 红果短剧专属广告接口路径
+
+> 以上域名同时写入 AdGuardHome 自定义规则（`adguard/conf/AdGuardHome.yaml` 的
+> `user_rules`），实现 DNS 层 + 代理层双重拦截。
 
 **修改规则后无需重启**，脚本每 60 秒自动重载。也可重启 mitmproxy 容器立即生效：
 
