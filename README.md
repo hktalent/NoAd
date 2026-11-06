@@ -356,7 +356,7 @@ docker compose restart mitmproxy
 tail -f mitmproxy/certs/blocked.log
 ```
 
-### 5.5 验证拦截效果
+### 5.6 验证拦截效果
 
 ```bash
 # 查看 mitmproxy 拦截日志
