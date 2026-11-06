@@ -145,6 +145,12 @@ user_rules:
   - '@@||bytedns1.com^'
   - '@@||aioho.com^'
   - '@@||huoshanstatic.com^'
+  - '||ecombdapi.com^'
+  - '||ecombdimg.com^'
+  - '||bsync3-normal-lq.zijieapi.com^'
+  - '||byteadverts.com^'
+  - '||pangolin-sdk-toutiao.com^'
+  - '||pangolin16.sgsnssdk.com^'
 dhcp:
   enabled: false
   interface_name: ""

@@ -77,3 +77,10 @@
 */ssp/*
 */dsp/*
 */adsdk/*
+# 字节电商广告（红果短剧带货广告素材/接口）2026-11-06 抓包补充
+ecombdapi.com
+ecombdimg.com
+bsync3-normal-lq.zijieapi.com
+byteadverts.com
+pangolin-sdk-toutiao.com
+pangolin16.sgsnssdk.com
